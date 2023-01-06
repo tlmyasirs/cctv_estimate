@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Estimate</title>
+</head>
+<body>
+
+{% load static %}
+<h1 style="text-align: center;">Select Items for rough Estimate</h1>
+
+<img src="{% static 'uiux_teal_white.png' %}" alt="Image">
+
+
+<style>
+    * {
+    margin: 0 auto;
+  }
+    .section {
+        display: flex;
+        flex-direction: column;
+        margin: 10px auto;
+    }
+    .section h2 {
+        margin: 0 auto;
+    }
+    .section select, .section input[type="checkbox"], .section input[type="radio"] .section input[type="radio"] {
+        margin: 5px 0;
+    }
+    .section label {
+        text-align: center;
+        display: block;
+    }
+</style>
+
+<div class="section">
+    <h2>Section 1</h2>
+    <label for="section_1_select">Select NVR:</label>
+    <select style=" margin: 0 auto;" name="section_1_select" id="section_1_select">
+        {% for nvr in nvrs %}
+            <option value="{{ nvr.price }}">{{ nvr.name }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+<div class="section">
+    <h2>Cameras</h2>
+    {% for cam in cams %}
+        <label for="section_2_checkbox_{{ cam.id }}">{{ cam.name }}:{{ cam.price }}</label>
+        <input type="checkbox" name="section_2_checkbox_{{ cam.id }}" id="section_2_checkbox_{{ cam.id }}" value="{{ cam.price }}">
+    {% endfor %}
+</div>
+
+<div class="section">
+    <h2>Storage size</h2>
+<label for="section_3_slider">Slider:</label>
+<input type="range" name="section_3_slider" id="section_3_slider" min="1" max="20" step="1" value="1">
+
+</div>
+    <p style="text-align: center;">Total: AED{{ total }}</p>
+
+
+
+<script>
+    const slider = document.querySelector('#section_3_slider');
+    const totalEl = document.querySelector('p');
+    const nvrRadioButtons = document.querySelectorAll('input[name="section_1_radio"]');
+    const camCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+
+    function updateTotal() {
+        let total = 0;
+
+        // Get selected NVR
+        const nvrRadioButtons = document.querySelectorAll('input[name="section_1_radio"]');
+        for (let i = 0; i < nvrRadioButtons.length; i++) {
+            if (nvrRadioButtons[i].checked) {
+                total += parseInt(nvrRadioButtons[i].value);
+                break;
+            }
+        }
+
+        // Get selected Cams
+        const camCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+        for (let i = 0; i < camCheckboxes.length; i++) {
+            if (camCheckboxes[i].checked) {
+                total += parseInt(camCheckboxes[i].value);
+            }
+        }
+
+        // Get slider value
+        total += parseInt(slider.value);
+
+        totalEl.innerText = `Total: ${total}`;
+    }
+
+    // Update total when any form element changes
+    nvrRadioButtons.forEach(button => button.addEventListener
+    ('change', updateTotal));
+        camCheckboxes.forEach(checkbox => checkbox.addEventListener('change', updateTotal));
+        slider.addEventListener('input', updateTotal);
+</script>
+
+</body>
+</html>
